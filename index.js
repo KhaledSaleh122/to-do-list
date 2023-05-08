@@ -6,20 +6,82 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 import express from 'express';
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import passport from 'passport';
+import { Strategy,ExtractJwt } from 'passport-jwt';
 import dotenv from 'dotenv'
-dotenv.config();
+import User from './models/account.js'
+/////////.env////////
+dotenv.config()
+
+
+
+///import allowed origins
+
+import { allowedOrigins } from './config/allowedOrigins.js';
+
+///
+////////Mongoose Requires//////////////
+mongoose.set('strictQuery', false);
+mongoose.connect(process.env.MONGODB_LINK).catch((err) => { console.log(err) });
+//////////////////////
+
 ///////Required express Files/////////
-import account from './routers/account/account.js'
-///////////////
+import account from './routers/account.js'
+import { corsOptions } from './config/corsOptions.js';
+//////////////
+
 const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-/////////.env////////
+
+app.use(cookieParser())
+
+
+
+app.use(passport.initialize())
+
+passport.use(new Strategy({
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.ACCESS_TOKEN_SECRET
+  }, (jwtPayload, done) => {
+    console.log(jwtPayload)
+    // find the user in the database based on the JWT token
+    User.findOne({username:jwtPayload.username})
+      .then(user => {
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch(err => {
+        return done(err, false);
+      });
+  }));
+
+///////CORS
+const credentials = (req,res,next)=>{
+  const origin = req.headers.origin;
+  if(allowedOrigins.includes(origin)){
+    res.header('Access-Control-Allow_Credentials', true)
+  }
+  next()
+}
+app.use(credentials)
+app.use(cors(corsOptions))
+
+///////
+
+
+
 const port = process.env.PORT|| 3000;
 //////////////////
-app.listen(port, () => {
-    console.log("server started at port " + port);
+  app.listen(port, () => {
+  console.log(`Server listening at ${port}`);
+
 });
 
 app.use('/account',account);
