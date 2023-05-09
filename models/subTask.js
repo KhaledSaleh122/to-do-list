@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 /////////schema and model//
 
 const subTaskSchema = new mongoose.Schema({

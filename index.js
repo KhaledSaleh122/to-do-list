@@ -29,6 +29,8 @@ mongoose.connect(process.env.MONGODB_LINK).catch((err) => { console.log(err) });
 
 ///////Required express Files/////////
 import account from './routers/account.js'
+import task_operations from './routers/task_operations.js'
+import subTask_operations from './routers/subtask_operations.js'
 import { corsOptions } from './config/corsOptions.js';
 //////////////
 
@@ -84,6 +86,8 @@ const port = process.env.PORT|| 3000;
 });
 
 app.use('/account',account);
+app.use('/task',task_operations);
+app.use('/subtask',subTask_operations);
 
 ////////404 Not Found
 app.use(function(req, res, next) {

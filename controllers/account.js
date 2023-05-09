@@ -9,13 +9,13 @@ export async function postRegister(req,res)
   const {password} = req.body;
   const {confirm_password} = req.body;
   try{
-      // if(!firstname || !lastname || !email || !username || !password || !confirm_password){throw 'To complete your request, please ensure that all required fields have been entered.'}
-      // if(!isNameValid(firstname)){throw 'Please ensure that the first name field only contains letters, and less than 25 character.'}
-      // if(!isNameValid(lastname)){throw 'Please ensure that the first name field only contains letters, and less than 25 character.'}
-      // if(!isEmailValid(email)){throw 'Please enter a valid email address in the correct email format.'}
-      // if(!isUserNameValid(username)){throw 'Please ensure that the Username field only contains letters and numbers.'}
-      // if(!isPasswordLengthValid(password)){throw 'Please ensure that password length more than 5 characters.'}
-      // if(!isPasswordConfimared(password,confirm_password)){throw 'Please ensure that password and confirm password is same.'}
+       if(!firstname || !lastname || !email || !username || !password || !confirm_password){throw 'To complete your request, please ensure that all required fields have been entered.'}
+       if(!isNameValid(firstname)){throw 'Please ensure that the first name field only contains letters, and less than 25 character.'}
+       if(!isNameValid(lastname)){throw 'Please ensure that the first name field only contains letters, and less than 25 character.'}
+       if(!isEmailValid(email)){throw 'Please enter a valid email address in the correct email format.'}
+       if(!isUserNameValid(username)){throw 'Please ensure that the Username field only contains letters and numbers.'}
+       if(!isPasswordLengthValid(password)){throw 'Please ensure that password length more than 5 characters.'}
+       if(!isPasswordConfimared(password,confirm_password)){throw 'Please ensure that password and confirm password is same.'}
       const data = {
           username:username,
           fname:firstname,
@@ -38,18 +38,18 @@ export async function postRegister(req,res)
 }
 
 export async function postLogin(req,res){
-  const {name} = req.body;
+  const {username} = req.body;
   const {password} = req.body;
   try{
-      if(!name || !password){throw 'Please ensure that you enterd the username and the password'}
+      if(!username || !password){throw 'Please ensure that you enterd the username and the password'}
       ///Authtincate User Here
-      let currentUser = await User.findOne({username:name});
+      let currentUser = await User.findOne({username:username});
 
       if(!currentUser) return res.send({msg:'No Such User'})
 
       if(currentUser.password !== password) return res.send({msg:"You've Entered a Wrong Password"});
 
-      const accessToken = jwt.sign({username:currentUser.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn : '300s'})
+      const accessToken = jwt.sign({username:currentUser.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn : '300m'})
       const refreshToken = jwt.sign({username:currentUser.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn : '15d'})
       res.cookie('jwt',refreshToken,{httpOnly:true, maxAge: 15 * 24 * 60 * 60 * 1000, sameSite:'None',secure:true})
       res.json({accessToken})
