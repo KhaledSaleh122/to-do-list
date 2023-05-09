@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 
+
 /////////schema and model//
 const taskSchema = new mongoose.Schema({
-  user_id : {type : Schema.Types.ObjectId,ref:'account'},//owner of task
+  user_id : {type : mongoose.Schema.Types.ObjectId,ref:'account'},//owner of task
   text : {type: String},//task text
   status: {type:String,default:'uncompleted'}, // status uncompleted,completed,canceled
   index : Number,
@@ -10,6 +11,5 @@ const taskSchema = new mongoose.Schema({
   completed_date : {type: Date}, // when task completes update this
   created_date : {type : Date,default:Date.now}//when task created
 });
-
 export default  mongoose.model("task", taskSchema);
 ////////////////////////////////

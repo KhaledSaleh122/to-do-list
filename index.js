@@ -47,7 +47,6 @@ passport.use(new Strategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.ACCESS_TOKEN_SECRET
   }, (jwtPayload, done) => {
-    console.log(jwtPayload)
     // find the user in the database based on the JWT token
     User.findOne({username:jwtPayload.username})
       .then(user => {

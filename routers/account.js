@@ -16,7 +16,6 @@ router.post('/register',postRegister);
 
 ///////////Login////////
 router.post('/login',postLogin);
-router.get('/refresh',passport.authenticate('jwt', { session: false })
-,handleRefershToken)
+router.get('/refresh',handleRefershToken)
 //////////Exports
 export default router
