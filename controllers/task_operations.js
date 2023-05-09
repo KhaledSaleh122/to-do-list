@@ -80,10 +80,10 @@ export async function updateTask (req,res){
           if(status === 'completed'){data.completed_date = Date.now()}
       }else if(action === 'index'){
           /////later we know how we will do it
-        //   let task = await Task.findOne({_id:task_id});
-        //   let indexedTask = await Task.updateOne({index},{task.index});
-        //   task.index = index;
-        //   await task.save();
+           let task = await Task.findOne({_id:task_id});
+           let indexedTask = await Task.updateOne({index},{task.index});
+           task.index = index;
+           await task.save();
 
       }else{
           throw 'Action required.'
