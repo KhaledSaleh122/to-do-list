@@ -1,5 +1,6 @@
 import User from '../models/account.js'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 export async function postRegister(req,res)
 {
   const {firstname} = req.body;
@@ -21,7 +22,7 @@ export async function postRegister(req,res)
           fname:firstname,
           lname:lastname,
           email:email,
-          password:password,
+          password:bcrypt.hashSync(password,bcrypt.genSaltSync(10)),
       }
       ///Create Account Here
       const user = await User.findOne({user:username});
@@ -47,7 +48,7 @@ export async function postLogin(req,res){
 
       if(!currentUser) return res.send({msg:'No Such User'})
 
-      if(currentUser.password !== password) return res.send({msg:"You've Entered a Wrong Password"});
+      if(!bcrypt.compareSync(password,currentUser.password)) return res.send({msg:"You've Entered a Wrong Password"});
 
       const accessToken = jwt.sign({username:currentUser.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn : '300m'})
       const refreshToken = jwt.sign({username:currentUser.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn : '15d'})
