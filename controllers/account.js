@@ -33,7 +33,7 @@ export async function postRegister(req,res)
       })
       ///
   }catch(err){
-      res.send({msg: err});
+    res.send({ error: err.toString() });
   }
 }
 
@@ -52,12 +52,9 @@ export async function postLogin(req,res){
       const accessToken = jwt.sign({username:currentUser.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn : '300m'})
       const refreshToken = jwt.sign({username:currentUser.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn : '15d'})
       res.cookie('jwt',refreshToken,{httpOnly:true, maxAge: 15 * 24 * 60 * 60 * 1000, sameSite:'None',secure:true})
-      res.json({accessToken})
-      ///
-      
-      // res.send({msg:'You Successfully login to your account.',result:'User Authtintcated'});
+      res.json({accessToken}) //Send accessToken to front end
   }catch(err){
-      res.send({msg: err});
+      res.send({ error: err.toString() });
   }
 }
 
@@ -76,9 +73,7 @@ export  function handleRefershToken(req,res){
               })
   const username = jwt.decode(refreshToken)
   const currentUser = User.find({username})
-  if(!currentUser) return res.sendStatus(403)
-  
-  
+  if(!currentUser) return res.sendStatus(403);
   }
 
 
