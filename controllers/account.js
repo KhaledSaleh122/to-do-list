@@ -9,6 +9,7 @@ export async function postRegister(req,res)
   const {username} = req.body;
   const {password} = req.body;
   const {confirm_password} = req.body;
+  console.log(req.body)
   try{
        if(!firstname || !lastname || !email || !username || !password || !confirm_password){throw 'To complete your request, please ensure that all required fields have been entered.'}
        if(!isNameValid(firstname)){throw 'Please ensure that the first name field only contains letters, and less than 25 character.'}
@@ -41,6 +42,7 @@ export async function postRegister(req,res)
 export async function postLogin(req,res){
   const {username} = req.body;
   const {password} = req.body;
+  console.log(req.body);
   try{
       if(!username || !password){throw 'Please ensure that you enterd the username and the password'}
       ///Authtincate User Here

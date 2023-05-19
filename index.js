@@ -72,13 +72,16 @@ const credentials = (req,res,next)=>{
   next()
 }
 app.use(credentials)
-app.use(cors(corsOptions))
+app.use(cors({origin: 'http://localhost:3000',
+methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'],
+allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 ///////
 
 
 
-const port = process.env.PORT|| 3000;
+const port = process.env.PORT|| 4000;
 //////////////////
   app.listen(port, () => {
   console.log(`Server listening at ${port}`);

@@ -9,7 +9,7 @@ export async function createTask(req, res) {
         const { text } = req.body;
         const { index } = req.body; // this priority of task
         //check if index exist
-        if(await Task.exists({index})){throw 'This priority already exists choose another'};
+        if(await Task.exists({index,user_id:user_id})){throw 'This priority already exists choose another'};
         if (!text) { throw 'To complete your request, please ensure that all required fields have been entered.' }
         const data = {
             user_id: user_id,
@@ -53,6 +53,8 @@ export async function updateTask(req, res) {
         const { text } = req.body;
         const { status } = req.body;
         const index = Number(req.body.index);
+        const user_id = req.user._id;
+        console.log(action);
         if (!action || !task_id) { throw 'To complete your request, please ensure that all required fields have been entered.' }
         if (!await isTaskIdExist(task_id)) { throw 'Task not exists.' }
         ////////prevent access  on other users tasks
@@ -76,8 +78,9 @@ export async function updateTask(req, res) {
         } else if (action === 'index') {
             if (index <= 0) { throw 'Index is required.' }
             let task = await Task.findOne({ _id: task_id }).exec();
-            let indexedTask = await Task.updateOne({ index }, { index: task.index }).exec();
+            let indexedTask = await Task.updateOne({ index,user_id }, { index: task.index }).exec();
             task.index = index;
+
             await task.save();
         } else {
             throw 'Action required.'
@@ -92,10 +95,11 @@ export async function updateTask(req, res) {
 export async function getTasks(req, res) {
     try {
         const user_id = req.user._id;
-        const col_name = req.body.col_name || 'default';
-        const order = Number(req.body.order); // if we want to specifiy asc desc 
+        const col_name = req.query.col_name || 'default';
+        const order = Number(req.query.order); // if we want to specifiy asc desc 
         const sortOption = {};
         sortOption[col_name] = order || 1 // default is asc
+        console.log(req.query)
         const tasks = await Task.find({ user_id: user_id })
             .sort(sortOption)
             .exec();
